@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
+import Row from "./row";
 
 export default function Home() {
   const [getSeat, setGetSeat] = useState([]);
@@ -28,37 +29,28 @@ export default function Home() {
       if (getSeat.includes(item.id)) {
         setTotalCost(total += item.price)
       }
+      if (getSeat.length === 0) {
+        setTotalCost(0)
+      }
     })
 
   }, [getSeat])
 
+  function fetchSeats(data) {
+    if (getSeat.includes(data)) {
+      getSeat.splice(getSeat.indexOf(data), 1);
+      setGetSeat(prev => [...prev]);
+    } else {
+      setGetSeat(prev => [...prev, data]);
+    }
+  }
+
   return (
     <section className="h-[100vh] flex items-center justify-center flex-col gap-24">
-      <div className="gap-2 flex " >
-        {
-          commonArr.map(item => {
-            return (
-              // eslint-disable-next-line react/jsx-key
-              <div className="flex gap-20">
-                <div
-                  key={item?.id}
-                  onClick={() => {
-                    if (getSeat.includes(item.seat)) {
-                      getSeat.splice(getSeat.indexOf(item.seat), 1);
-                      setGetSeat(prev => [...prev]);
-                    } else {
-                      setGetSeat(prev => [...prev, item.seat]);
-                    }
-                  }}
-                  className="size-24 bg-red-200 flex justify-center items-center"
-                >
-                  {item?.seat}
-                </div>
-              </div>
-            )
-          })
-        }
-
+      <div className="flex flex-col gap-10">
+        <Row fetching={fetchSeats} commonArr={row1} type='silver' />
+        <Row fetching={fetchSeats} commonArr={row2} type='gold' />
+        <Row fetching={fetchSeats} commonArr={row3} type='platinum' />
       </div>
       <h1 className="text-2xl font-bold">Total is : {totalCost}</h1>
     </section>
