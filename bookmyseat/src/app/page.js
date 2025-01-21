@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import Row from "./row";
 
 export default function Home() {
-  const [getSeat, setGetSeat] = useState([]);
-  const [totalCost, setTotalCost] = useState(0);
+  const [seatSelection, setSeatSelection] = useState([]);
+  const [updateTotalCost, setUpdateTotalCost] = useState(0);
 
-  function createSeat(seatName, type, cost) {
+  function initializeSeats(seatName, type, cost) {
     let num = 0;
     let apiData = Array.from({ length: 6 }).map((_) => {
       num++
@@ -16,7 +16,7 @@ export default function Home() {
     return apiData;
   }
 
-  const arr = [
+  const seatingOptions = [
     {
       alphabet: 'A',
       type: 'silver',
@@ -34,42 +34,40 @@ export default function Home() {
     }
   ];
 
-
-  const nonFlatArr = arr.map(item => {
-    return createSeat(item.alphabet, item.type, item.price)
+  const segregateRows = seatingOptions.map(item => {
+    return initializeSeats(item.alphabet, item.type, item.price)
   });
 
-  const commonArr = nonFlatArr.flat();
+  const flattenedRows = segregateRows.flat();
 
   useEffect(() => {
-
-    const total = commonArr.reduce((acc, item) => {
-      if (getSeat.includes(item.id)) {
+    const total = flattenedRows.reduce((acc, item) => {
+      if (seatSelection.includes(item.id)) {
         return acc += item.price
       }
       return acc
     }, 0)
-    setTotalCost(total)
-  }, [getSeat])
+    setUpdateTotalCost(total)
+  }, [seatSelection])
 
-  function fetchSeats(data) {
-    if (getSeat.includes(data)) {
-      getSeat.splice(getSeat.indexOf(data), 1);
-      setGetSeat(prev => [...prev]);
+  function handleSeatSelection(data) {
+    if (seatSelection.includes(data)) {
+      seatSelection.splice(seatSelection.indexOf(data), 1);
+      setSeatSelection(prev => [...prev]);
     }
-    else if (getSeat.length < 8) {
-      setGetSeat(prev => [...prev, data]);
+    else if (seatSelection.length < 8) {
+      setSeatSelection(prev => [...prev, data]);
     }
   }
 
   return (
     <section className="h-[100vh] flex items-center justify-center flex-col gap-24">
       <div className="flex flex-col gap-10">
-        {nonFlatArr.map((item, index) => {
-          return <Row key={index} fetching={fetchSeats} commonArr={item} type={item[0].type} />
+        {segregateRows.map((item, index) => {
+          return <Row key={index} handleSeatSelection={handleSeatSelection} flattenedRows={item} type={item[0].type} />
         })}
       </div>
-      <h1 className="text-2xl font-bold">Total is : {totalCost}</h1>
+      <h1 className="text-2xl font-bold">Total is : {updateTotalCost}</h1>
     </section>
   );
 }

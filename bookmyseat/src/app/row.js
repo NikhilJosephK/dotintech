@@ -1,17 +1,17 @@
 "use client";
 
-export default function Row({ commonArr, fetching, type }) {
+export default function Row({ flattenedRows, handleSeatSelection, type }) {
 
     return (
         <div className="flex gap-20 justify-center">
-            {commonArr.map((item) => {
+            {flattenedRows.map((item) => {
 
                 return (
                     <div key={item?.id} className="flex gap-20">
                         {item.type.includes(type) && (
                             <div className="flex gap-20">
                                 <div
-                                    onClick={() => fetching(item.seat)}
+                                    onClick={() => handleSeatSelection(item.seat)}
                                     className="size-24 bg-red-200 flex justify-center items-center"
                                 >
                                     {item?.seat}
