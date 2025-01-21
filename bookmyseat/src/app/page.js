@@ -6,7 +6,6 @@ import Row from "./row";
 export default function Home() {
   const [getSeat, setGetSeat] = useState([]);
   const [totalCost, setTotalCost] = useState(0);
-  let row1, row2, row3;
 
   function createSeat(seatName, type, cost) {
     let num = 0;
@@ -17,30 +16,48 @@ export default function Home() {
     return apiData;
   }
 
-  row1 = createSeat('A', 'silver', 100);
-  row2 = createSeat('B', 'gold', 150);
-  row3 = createSeat('C', 'platinum', 200);
+  const arr = [
+    {
+      alphabet: 'A',
+      type: 'silver',
+      price: 100
+    },
+    {
+      alphabet: 'B',
+      type: 'gold',
+      price: 150
+    },
+    {
+      alphabet: 'C',
+      type: 'platinum',
+      price: 200
+    }
+  ];
 
-  const commonArr = [...row1, ...row2, ...row3];
+
+  const nonFlatArr = arr.map(item => {
+    return createSeat(item.alphabet, item.type, item.price)
+  });
+
+  const commonArr = nonFlatArr.flat();
 
   useEffect(() => {
-    let total = 0
-    commonArr.forEach(item => {
-      if (getSeat.includes(item.id)) {
-        setTotalCost(total += item.price)
-      }
-      if (getSeat.length === 0) {
-        setTotalCost(0)
-      }
-    })
 
+    const total = commonArr.reduce((acc, item) => {
+      if (getSeat.includes(item.id)) {
+        return acc += item.price
+      }
+      return acc
+    }, 0)
+    setTotalCost(total)
   }, [getSeat])
 
   function fetchSeats(data) {
     if (getSeat.includes(data)) {
       getSeat.splice(getSeat.indexOf(data), 1);
       setGetSeat(prev => [...prev]);
-    } else {
+    }
+    else if (getSeat.length < 8) {
       setGetSeat(prev => [...prev, data]);
     }
   }
@@ -48,9 +65,9 @@ export default function Home() {
   return (
     <section className="h-[100vh] flex items-center justify-center flex-col gap-24">
       <div className="flex flex-col gap-10">
-        <Row fetching={fetchSeats} commonArr={row1} type='silver' />
-        <Row fetching={fetchSeats} commonArr={row2} type='gold' />
-        <Row fetching={fetchSeats} commonArr={row3} type='platinum' />
+        {nonFlatArr.map((item, index) => {
+          return <Row key={index} fetching={fetchSeats} commonArr={item} type={item[0].type} />
+        })}
       </div>
       <h1 className="text-2xl font-bold">Total is : {totalCost}</h1>
     </section>
