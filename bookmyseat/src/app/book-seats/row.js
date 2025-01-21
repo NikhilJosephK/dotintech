@@ -23,7 +23,7 @@ export default function Row({ flattenedRows, handleSeatSelection, type, seatSele
                                         onClick={() => {
                                             handleSeatSelection(item.seat)
                                         }}
-                                        className={`rounded-md sm:size-12 size-8  bg-red-200 flex justify-center items-center cursor-pointer ${seatList.includes(item.seat) ? 'bg-red-200' : 'bg-blue-200'}`}
+                                        className={`rounded-md sm:size-12 size-8  bg-blue-200 flex justify-center items-center cursor-pointer ${seatList.includes(item.seat) ? 'bg-red-200' : 'bg-blue-200'}`}
                                     >
                                         {item?.seat}
                                     </div>
